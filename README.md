@@ -31,7 +31,7 @@ print(your_dict) # {1: 1, 2: 2, 3: 3}
 ```
 
 But don't forget that these values can be extracted only in the timeout period.
-For example:
+For example (each value has the lifetime = 5 seconds):
 ```python
 import time
 from timovar import TimeoutDict as TD
