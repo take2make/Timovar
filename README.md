@@ -30,3 +30,24 @@ your_dict.append({"2": 2})
 print(your_dict) # {1: 1, 2: 2, 3: 3}
 ```
 
+But don't forget that these values can be extracted only in the timeout period.
+For example:
+```python
+import time
+from timovar import TimeoutDict as TD
+
+
+_dict = TD({"3": 3, "4": 4})
+
+print(_dict["3"])
+time.sleep(3)
+print(_dict)
+_dict.append({"6": 6})
+print(_dict)
+print(_dict["3"])
+time.sleep(3)
+print(_dict)
+time.sleep(5)
+print(_dict)
+```
+
