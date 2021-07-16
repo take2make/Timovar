@@ -50,4 +50,39 @@ print(_dict)
 time.sleep(5)
 print(_dict)
 ```
+## Update (version with redis as a backgroud worker)
+
+In the previous version you should to remove variables by yourself, in this
+update this work can be done by redis. 
+Firstly, you should install redis package
+```bash
+pip3 install redis
+```
+
+Now you can apply new abstraction:
+```python
+from timovar import TimeoutRedisVar as TRV
+from timovar import SomeVar # it can be any specific object
+import redis
+
+redis = redis.Redis(
+        host= 'localhost',
+        port= '6379')
+        
+Agents = TRV(redis)
+Agents["1"] = SomeVar(1) # define
+
+print(Agents["1"].value)
+time.sleep(0.6)
+
+Agents["1"] = SomeVar(2) # redefine
+print(Agents["1"].value)
+time.sleep(0.6)
+
+print(Agents["1"].value)
+time.sleep(1.9)
+
+print(Agents["1"].value) # will be none, because default timeout is 1 second
+
+
 
