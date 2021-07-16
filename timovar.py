@@ -1,5 +1,5 @@
 import time
-
+import pickle
 
 class TimeoutVar:
     """Variable whose values time out."""
@@ -10,7 +10,7 @@ class TimeoutVar:
         self._last_set = time.time()
         self.timeout = timeout
 
-    @property
+    @property # == getter obj.value
     def value(self):
         """Get the value if the value hasn't timed out."""
         if time.time() - self._last_set < self.timeout:
@@ -63,3 +63,32 @@ class TimeoutDict:
     def append(self, mini_dict):
         item = list(mini_dict.items())[0]
         self.dict[item[0]] = TimeoutVar(item[1])
+
+
+class SomeVar:
+    def __init__(self, value):
+        self._value = value
+
+    @property
+    def value(self):
+        return self._value
+
+
+class TimeoutRedisVar:
+    def __init__(self, redis, timeout=1):
+        self._timeout = timeout
+        self.r = redis
+
+    def __getitem__(self, key) -> SomeVar:
+        if self.r.get(key) is not None:
+            _value = self.r.get(key)
+            self.r.set(key, _value, self._timeout)
+            return pickle.loads(_value)
+        return SomeVar(None)
+
+    def __setitem__(self, key, value):
+        pickled_object = pickle.dumps(value)
+        self.r.set(key, pickled_object, self._timeout)
+
+    def __repr__(self):
+        return f"{self.r.get(self._key)}"
